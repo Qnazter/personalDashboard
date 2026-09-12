@@ -13,5 +13,7 @@ export type Project = {
   url?: string;
   status: ProjectStatus;
   notes?: string;
+  startDate?: string;
+  targetDate?: string;
   createdAt: number;
 };

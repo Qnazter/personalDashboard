@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Mail, RefreshCw, MailOpen } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type EmailItem = {
   id: string;
@@ -11,6 +12,8 @@ type EmailItem = {
   date: string | null;
   snippet: string;
 };
+type MailFilter = "unread" | "starred" | "all" | "spam";
+const FILTERS: { value: MailFilter; label: string }[] = [{ value: "unread", label: "ยังไม่ได้อ่าน" }, { value: "starred", label: "ติดดาว" }, { value: "all", label: "อีเมลทั้งหมด" }, { value: "spam", label: "สแปม" }];
 
 function shortFrom(from: string) {
   // "ชื่อคน <email@domain.com>" -> เอาแค่ชื่อ ถ้าไม่มีชื่อก็ใช้ email เต็ม
@@ -23,11 +26,12 @@ export default function InboxPage() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filter, setFilter] = useState<MailFilter>("unread");
 
   async function load() {
     setLoading(true);
     setError("");
-    const res = await fetch("/api/gmail");
+    const res = await fetch(`/api/gmail?filter=${filter}`);
     if (res.ok) {
       const data = await res.json();
       setEmails(data.emails);
@@ -41,7 +45,7 @@ export default function InboxPage() {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [filter]);
 
   return (
     <div className="max-w-2xl">
@@ -57,12 +61,11 @@ export default function InboxPage() {
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
-      <p className="text-muted text-sm mb-6">
-        อีเมลที่ยังไม่ได้อ่านล่าสุดจาก Gmail
-      </p>
+      <p className="text-muted text-sm mb-4">ดูอีเมลล่าสุดจาก Gmail ตามหมวดที่เลือก</p>
+      <div className="flex flex-wrap gap-2 mb-6">{FILTERS.map((item) => <button key={item.value} onClick={() => setFilter(item.value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${filter === item.value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}>{item.label}</button>)}</div>
 
       {loading ? (
-        <p className="text-muted text-sm">กำลังโหลด...</p>
+        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดอีเมล...</p><Progress /></div>
       ) : error ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-red-400">
           {error}
@@ -73,7 +76,7 @@ export default function InboxPage() {
       ) : emails.length === 0 ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-muted flex items-center gap-2">
           <MailOpen size={16} />
-          อ่านหมดแล้ว ไม่มีอีเมลค้าง 🎉
+          ไม่มีอีเมลในหมวดนี้
         </div>
       ) : (
         <ul className="space-y-2">

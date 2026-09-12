@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
     url: (body?.url ?? "").toString().trim(),
     status: body?.status ?? "planning",
     notes: (body?.notes ?? "").toString().trim(),
+    startDate: (body?.startDate ?? "").toString(),
+    targetDate: (body?.targetDate ?? "").toString(),
     createdAt: Date.now(),
   };
   const ref = await getAdminDb().collection(COLLECTION).add(doc);

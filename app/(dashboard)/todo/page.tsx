@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Check } from "lucide-react";
 import type { Todo } from "@/types";
+import { Progress } from "@/components/ui/progress";
 
 export default function TodoPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -76,7 +77,7 @@ export default function TodoPage() {
       </form>
 
       {loading ? (
-        <p className="text-muted text-sm">กำลังโหลด...</p>
+        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดรายการ...</p><Progress /></div>
       ) : todos.length === 0 ? (
         <p className="text-muted text-sm">ยังไม่มีรายการ — เพิ่มอันแรกเลย!</p>
       ) : (

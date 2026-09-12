@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarDays, MapPin, ExternalLink, RefreshCw } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type CalendarEvent = {
   id: string;
@@ -39,11 +40,12 @@ export default function SchedulePage() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [days, setDays] = useState(7);
 
   async function load() {
     setLoading(true);
     setError("");
-    const res = await fetch("/api/calendar");
+    const res = await fetch(`/api/calendar?days=${days}`);
     if (res.ok) {
       setEvents(await res.json());
     } else {
@@ -55,7 +57,7 @@ export default function SchedulePage() {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [days]);
 
   // จัดกลุ่ม event ตามวันที่ เพื่อแสดงเป็นหัวข้อวันคั่นระหว่างกลุ่ม
   const grouped = events.reduce<Record<string, CalendarEvent[]>>((acc, ev) => {
@@ -80,9 +82,12 @@ export default function SchedulePage() {
       <p className="text-muted text-sm mb-6">
         Import จาก Google Calendar: DII / Work
       </p>
+      <div className="flex flex-wrap gap-2 mb-6">
+        {[7, 15, 30, 60, 90].map((value) => <button key={value} onClick={() => setDays(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${days === value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}>อีก {value} วัน</button>)}
+      </div>
 
       {loading ? (
-        <p className="text-muted text-sm">กำลังโหลด...</p>
+        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดตารางนัดหมาย...</p><Progress /></div>
       ) : error ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-red-400">
           {error}
@@ -93,7 +98,7 @@ export default function SchedulePage() {
       ) : events.length === 0 ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-muted flex items-center gap-2">
           <CalendarDays size={16} />
-          ไม่มีนัดหมายใน
+          ไม่มีนัดหมายในอีก {days} วัน
         </div>
       ) : (
         <div className="space-y-6">

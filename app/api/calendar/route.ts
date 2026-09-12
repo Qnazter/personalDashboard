@@ -7,7 +7,7 @@ import { authOptions } from "@/lib/auth";
 // ถ้าไม่ตั้งค่า จะใช้ "primary" (calendar หลักของบัญชี)
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || "primary";
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -20,14 +20,16 @@ export async function GET() {
   }
 
   const now = new Date();
-  const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const requestedDays = Number(new URL(req.url).searchParams.get("days"));
+  const days = [7, 15, 30, 60, 90].includes(requestedDays) ? requestedDays : 7;
+  const inDays = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
   const params = new URLSearchParams({
     timeMin: now.toISOString(),
-    timeMax: in7Days.toISOString(),
+    timeMax: inDays.toISOString(),
     singleEvents: "true",
     orderBy: "startTime",
-    maxResults: "20",
+    maxResults: "100",
   });
 
   const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(

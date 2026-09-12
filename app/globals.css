@@ -16,3 +16,16 @@ body {
   background-color: #2a2f3a;
   border-radius: 8px;
 }
+
+@keyframes progress-slide {
+  from { transform: translateX(-130%); }
+  to { transform: translateX(350%); }
+}
+
+.animate-progress { animation: progress-slide 1.05s ease-in-out infinite; }
+
+@layer components {
+  .input {
+    @apply bg-panel2 border border-border rounded-lg px-3 py-2.5 outline-none focus:border-accent2 transition placeholder:text-slate-500;
+  }
+}

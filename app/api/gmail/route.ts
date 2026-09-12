@@ -9,7 +9,7 @@ function getHeader(headers: { name: string; value: string }[], name: string) {
     ?.value;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,10 +23,13 @@ export async function GET() {
 
   const authHeader = { Authorization: `Bearer ${session.accessToken}` };
 
-  // ขั้น 1: หา id ของอีเมลที่ยังไม่ได้อ่าน ใน Inbox (สูงสุด 15 ฉบับล่าสุด)
+  const requestedFilter = new URL(req.url).searchParams.get("filter");
+  const filter = requestedFilter === "starred" || requestedFilter === "spam" || requestedFilter === "all" ? requestedFilter : "unread";
+  const queries = { unread: "is:unread in:inbox", starred: "is:starred", spam: "in:spam", all: "in:anywhere -in:spam -in:trash" };
+  // ขั้น 1: หา id ของอีเมลตามหมวดที่เลือก (สูงสุด 15 ฉบับล่าสุด)
   const listRes = await fetch(
     `${GMAIL_BASE}/messages?q=${encodeURIComponent(
-      "is:unread in:inbox"
+      queries[filter]
     )}&maxResults=15`,
     { headers: authHeader, cache: "no-store" }
   );
@@ -64,6 +67,7 @@ export async function GET() {
   );
 
   return NextResponse.json({
+    filter,
     unreadCount: listData.resultSizeEstimate ?? emails.filter(Boolean).length,
     emails: emails.filter(Boolean),
   });
