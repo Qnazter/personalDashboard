@@ -90,45 +90,8 @@ middleware.ts            บังคับ login ก่อนเข้าทุ
    (อย่าลืมเปลี่ยน `NEXTAUTH_URL` เป็นโดเมนจริง)
 4. เพิ่ม redirect URI ของโดเมนจริงใน Google OAuth console
 
-## งานที่เหลือ (Phase 3)
-- Token Monitor ที่หน้า `/tools/token-monitor` — ข้ามไว้ก่อน เพราะ provider หลัก
-  (Claude, ChatGPT, Gemini, Antigravity) ไม่มี public API ให้เช็กโควตาของ
-  แผนแชทแบบที่ใช้งานจริง (มีแต่ API แบบ pay-as-you-go ที่ผูก billing)
-
-## Phase 4 — เชื่อม Google Calendar + Gmail (เสร็จแล้ว)
-
-### สิ่งที่ต้องตั้งค่าเพิ่มใน Google Cloud Console
-1. ไปที่ https://console.cloud.google.com/apis/library แล้วเปิดใช้งาน
-   **Google Calendar API** และ **Gmail API** ในโปรเจกต์เดียวกับที่ใช้ทำ OAuth Client
-2. ไปที่ **OAuth consent screen** > Scopes > เพิ่ม 2 scope นี้:
-   - `.../auth/calendar.readonly`
-   - `.../auth/gmail.readonly`
-   (ถ้า OAuth consent screen อยู่โหมด "Testing" ให้เพิ่มอีเมลของคุณใน
-   Test users ด้วย ไม่งั้น Google จะปฏิเสธการขอ scope เหล่านี้)
-3. ไม่ต้องสร้าง OAuth Client ใหม่ — ใช้ Client ID/Secret เดิมจาก Phase 1 ได้เลย
-
-### สร้าง Calendar แยกสำหรับงาน/เรียน (แนะนำ)
-1. เปิด Google Calendar (บัญชีเดียวกับที่ใช้ล็อกอินเข้าแดชบอร์ด)
-2. สร้าง Calendar ใหม่ เช่น "DII / Work"
-3. ไปที่ตั้งค่า calendar นั้น > "Integrate calendar" > คัดลอก **Calendar ID**
-4. นำมาใส่ใน `.env.local` ที่ตัวแปร `GOOGLE_CALENDAR_ID`
-   (ถ้าไม่ตั้งค่า ระบบจะดึงจาก calendar หลักของบัญชีแทน)
-
-### สำคัญ: ต้อง Login ใหม่หลังอัปเดตโค้ด
-เพราะมีการเพิ่ม scope ใหม่ (`calendar.readonly`, `gmail.readonly`) เข้าไปใน
-การขอสิทธิ์ — session เดิมที่ล็อกอินค้างไว้ตั้งแต่ Phase 1 จะยังไม่มี
-สิทธิ์เหล่านี้ ให้กด **ออกจากระบบแล้ว login ใหม่อีกครั้ง** ระบบจะพาไปหน้า
-ยืนยันสิทธิ์ (consent screen) ของ Google อีกรอบเพื่อขอ scope ใหม่
-
-### หน้าที่เพิ่มเข้ามา
-- `/schedule` — แสดงนัดหมาย 7 วันข้างหน้าจาก Calendar ที่ตั้งไว้ จัดกลุ่มตามวัน
-- `/inbox` — แสดงอีเมลที่ยังไม่ได้อ่านล่าสุด 15 ฉบับจาก Gmail (อ่านอย่างเดียว
-  ไม่มีการลบ/ทำเครื่องหมายอ่านแล้วจากแดชบอร์ด)
-
-ทั้งสองหน้าเรียก Google API ตรงจาก API Route (`/api/calendar`, `/api/gmail`)
-โดยใช้ access token ของ session ปัจจุบัน และมีระบบ refresh token อัตโนมัติ
-เมื่อ token หมดอายุ (เก็บ logic ไว้ที่ `lib/auth.ts`)
-
-### Deploy ขึ้น Vercel
-อย่าลืมเพิ่ม `GOOGLE_CALENDAR_ID` เข้าไปใน Environment Variables ของ Vercel
-ด้วย นอกเหนือจากตัวแปรเดิมทั้งหมด แล้ว redeploy
+## งานที่เหลือ (Phase 3-4)
+- Phase 3: สร้าง API Route เช็กโควตา Token จากผู้ให้บริการ AI + แสดงเป็น Progress Bar
+  ที่หน้า `/tools/token-monitor`
+- Phase 4: เชื่อม Google Calendar API ที่หน้า `/schedule` และ Gmail API ที่หน้า `/inbox`
+  แล้ว deploy ขึ้น Vercel จริง
