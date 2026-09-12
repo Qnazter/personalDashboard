@@ -58,7 +58,7 @@ export default function InboxPage() {
         </button>
       </div>
       <p className="text-muted text-sm mb-6">
-        อีเมลที่ยังไม่ได้อ่านล่าสุดจาก Gmail (สูงสุด 15 ฉบับ)
+        อีเมลที่ยังไม่ได้อ่านล่าสุดจาก Gmail
       </p>
 
       {loading ? (

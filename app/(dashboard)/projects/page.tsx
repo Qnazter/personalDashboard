@@ -53,7 +53,7 @@ export default function ProjectsPage() {
 
   async function updateStatus(project: Project, status: ProjectStatus) {
     setProjects((prev) =>
-      prev.map((p) => (p.id === project.id ? { ...p, status } : p))
+      prev.map((p) => (p.id === project.id ? { ...p, status } : p)),
     );
     await fetch(`/api/projects/${project.id}`, {
       method: "PATCH",
@@ -71,7 +71,7 @@ export default function ProjectsPage() {
     <div className="max-w-3xl">
       <h1 className="text-xl font-semibold mb-1">Project Hub</h1>
       <p className="text-muted text-sm mb-6">
-        รวมลิงก์โปรเจกต์และกระดานติดตามความคืบหน้างาน
+        รวมโปรเจกต์และติดตามความคืบหน้างาน
       </p>
 
       <form
@@ -135,7 +135,11 @@ export default function ProjectsPage() {
                 }`}
               >
                 {Object.entries(STATUS_LABEL).map(([value, label]) => (
-                  <option key={value} value={value} className="bg-panel text-text">
+                  <option
+                    key={value}
+                    value={value}
+                    className="bg-panel text-text"
+                  >
                     {label}
                   </option>
                 ))}

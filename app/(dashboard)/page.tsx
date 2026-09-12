@@ -11,20 +11,20 @@ const CARDS = [
   {
     href: "/todo",
     icon: ListTodo,
-    title: "To-Do วันนี้",
-    desc: "รายการที่ต้องทำวันนี้",
+    title: "To-Do List",
+    desc: "สิ่งที่ต้องทำ",
   },
   {
     href: "/tools/converter",
     icon: Wrench,
     title: "Quick Converter",
-    desc: "แปลง/จัดฟอร์แมต JSON และไฟล์",
+    desc: "แปลงทุกอย่างบนโลก",
   },
   {
     href: "/tools/token-monitor",
     icon: Gauge,
     title: "AI Token Monitor",
-    desc: "เช็กโควตา Token ของ AI (Phase 3)",
+    desc: "เช็กโควตา Token ของ AI",
   },
 ];
 

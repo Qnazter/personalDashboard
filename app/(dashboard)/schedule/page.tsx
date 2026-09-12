@@ -17,10 +17,13 @@ function formatEventTime(event: CalendarEvent) {
   if (event.allDay) return "ทั้งวัน";
   const start = new Date(event.start);
   const end = new Date(event.end);
-  const opts: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit" };
+  const opts: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
   return `${start.toLocaleTimeString("th-TH", opts)} - ${end.toLocaleTimeString(
     "th-TH",
-    opts
+    opts,
   )}`;
 }
 
@@ -75,7 +78,7 @@ export default function SchedulePage() {
         </button>
       </div>
       <p className="text-muted text-sm mb-6">
-        7 วันข้างหน้า จาก Google Calendar ที่ตั้งค่าไว้
+        Import จาก Google Calendar: DII / Work
       </p>
 
       {loading ? (
@@ -90,7 +93,7 @@ export default function SchedulePage() {
       ) : events.length === 0 ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-muted flex items-center gap-2">
           <CalendarDays size={16} />
-          ไม่มีนัดหมายใน 7 วันข้างหน้า
+          ไม่มีนัดหมายใน
         </div>
       ) : (
         <div className="space-y-6">

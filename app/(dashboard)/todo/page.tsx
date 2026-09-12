@@ -38,7 +38,7 @@ export default function TodoPage() {
 
   async function toggleTodo(todo: Todo) {
     setTodos((prev) =>
-      prev.map((t) => (t.id === todo.id ? { ...t, done: !t.done } : t))
+      prev.map((t) => (t.id === todo.id ? { ...t, done: !t.done } : t)),
     );
     await fetch(`/api/todos/${todo.id}`, {
       method: "PATCH",
@@ -54,7 +54,7 @@ export default function TodoPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-semibold mb-1">To-Do ประจำวัน</h1>
+      <h1 className="text-xl font-semibold mb-1">To-Do List</h1>
       <p className="text-muted text-sm mb-6">
         เก็บลง Firestore แบบเรียลไทม์ผ่าน API Route
       </p>
