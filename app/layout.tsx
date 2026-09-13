@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Prompt } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+
+const prompt = Prompt({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-prompt",
+});
 
 export const metadata: Metadata = {
   title: "Personal Command Center",
@@ -16,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th">
-      <body>
+      <body className={prompt.variable}>
         <Providers>{children}</Providers>
       </body>
     </html>

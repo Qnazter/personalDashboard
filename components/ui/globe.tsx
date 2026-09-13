@@ -28,12 +28,28 @@ export function Globe({ className = "" }: { className?: string }) {
         { location: [51.5072, -0.1276], size: 0.04 },
       ],
     });
-    const resize = () => { width = canvasRef.current?.offsetWidth ?? 0; };
-    resize(); window.addEventListener("resize", resize);
+    const resize = () => {
+      width = canvasRef.current?.offsetWidth ?? 0;
+    };
+    resize();
+    window.addEventListener("resize", resize);
     let frame = 0;
-    const rotate = () => { globe.update({ phi, width: width * 2, height: width * 2 }); phi += 0.003; frame = requestAnimationFrame(rotate); };
+    const rotate = () => {
+      globe.update({ phi, width: width * 2, height: width * 2 });
+      phi += 0.003;
+      frame = requestAnimationFrame(rotate);
+    };
     rotate();
-    return () => { cancelAnimationFrame(frame); globe.destroy(); window.removeEventListener("resize", resize); };
+    return () => {
+      cancelAnimationFrame(frame);
+      globe.destroy();
+      window.removeEventListener("resize", resize);
+    };
   }, []);
-  return <canvas ref={canvasRef} className={`absolute aspect-square w-[135%] max-w-none ${className}`} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={`absolute aspect-square w-[135%] max-w-none ${className}`}
+    />
+  );
 }

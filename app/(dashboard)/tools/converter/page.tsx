@@ -220,7 +220,7 @@ export default function ConverterPage() {
             onClick={runText}
             className="bg-accent2 text-slate-950 rounded-lg px-5 py-2.5 font-semibold w-fit"
           >
-            แปลง / จัดฟอร์แมต
+            convert
           </button>
         </div>
       )}

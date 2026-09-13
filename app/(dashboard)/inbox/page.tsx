@@ -13,7 +13,12 @@ type EmailItem = {
   snippet: string;
 };
 type MailFilter = "unread" | "starred" | "all" | "spam";
-const FILTERS: { value: MailFilter; label: string }[] = [{ value: "unread", label: "ยังไม่ได้อ่าน" }, { value: "starred", label: "ติดดาว" }, { value: "all", label: "อีเมลทั้งหมด" }, { value: "spam", label: "สแปม" }];
+const FILTERS: { value: MailFilter; label: string }[] = [
+  { value: "unread", label: "Unread" },
+  { value: "starred", label: "Starred" },
+  { value: "all", label: "All Emails" },
+  { value: "spam", label: "Spam" },
+];
 
 function shortFrom(from: string) {
   // "ชื่อคน <email@domain.com>" -> เอาแค่ชื่อ ถ้าไม่มีชื่อก็ใช้ email เต็ม
@@ -38,7 +43,7 @@ export default function InboxPage() {
       setUnreadCount(data.unreadCount);
     } else {
       const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "โหลดอีเมลไม่สำเร็จ");
+      setError(body.error ?? "Loading emails failed");
     }
     setLoading(false);
   }
@@ -56,27 +61,40 @@ export default function InboxPage() {
         <button
           onClick={load}
           className="text-muted hover:text-text transition"
-          title="รีเฟรช"
+          title="refresh"
         >
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
-      <p className="text-muted text-sm mb-4">ดูอีเมลล่าสุดจาก Gmail ตามหมวดที่เลือก</p>
-      <div className="flex flex-wrap gap-2 mb-6">{FILTERS.map((item) => <button key={item.value} onClick={() => setFilter(item.value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${filter === item.value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}>{item.label}</button>)}</div>
+      <p className="text-muted text-sm mb-4">View your latest emails</p>
+      <div className="flex flex-wrap gap-2 mb-6">
+        {FILTERS.map((item) => (
+          <button
+            key={item.value}
+            onClick={() => setFilter(item.value)}
+            className={`rounded-full border px-3 py-1.5 text-xs transition ${filter === item.value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
       {loading ? (
-        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดอีเมล...</p><Progress /></div>
+        <div className="max-w-sm space-y-2 pt-3">
+          <p className="text-muted text-sm">Loading emails...</p>
+          <Progress />
+        </div>
       ) : error ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-red-400">
           {error}
           <p className="text-muted mt-2 text-xs">
-            ลองออกจากระบบแล้วล็อกอินใหม่ เพื่อขอสิทธิ์ Gmail อีกครั้ง
+            Try signing out and back in to request Gmail permissions again
           </p>
         </div>
       ) : emails.length === 0 ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-muted flex items-center gap-2">
           <MailOpen size={16} />
-          ไม่มีอีเมลในหมวดนี้
+          no emails found for the selected filter
         </div>
       ) : (
         <ul className="space-y-2">

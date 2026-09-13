@@ -7,6 +7,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-prompt)", "sans-serif"],
+      },
       colors: {
         bg: "#0f1115",
         panel: "#171a21",

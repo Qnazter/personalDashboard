@@ -15,7 +15,7 @@ type CalendarEvent = {
 };
 
 function formatEventTime(event: CalendarEvent) {
-  if (event.allDay) return "ทั้งวัน";
+  if (event.allDay) return "All Day";
   const start = new Date(event.start);
   const end = new Date(event.end);
   const opts: Intl.DateTimeFormatOptions = {
@@ -50,7 +50,7 @@ export default function SchedulePage() {
       setEvents(await res.json());
     } else {
       const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "โหลดตารางนัดหมายไม่สำเร็จ");
+      setError(body.error ?? "Loading events failed");
     }
     setLoading(false);
   }
@@ -74,31 +74,42 @@ export default function SchedulePage() {
         <button
           onClick={load}
           className="text-muted hover:text-text transition"
-          title="รีเฟรช"
+          title="Refresh"
         >
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
       <p className="text-muted text-sm mb-6">
-        Import จาก Google Calendar: DII / Work
+        Import from Google Calendar: DII / Work
       </p>
       <div className="flex flex-wrap gap-2 mb-6">
-        {[7, 15, 30, 60, 90].map((value) => <button key={value} onClick={() => setDays(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${days === value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}>อีก {value} วัน</button>)}
+        {[7, 15, 30, 60, 90].map((value) => (
+          <button
+            key={value}
+            onClick={() => setDays(value)}
+            className={`rounded-full border px-3 py-1.5 text-xs transition ${days === value ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}
+          >
+            Next {value} days
+          </button>
+        ))}
       </div>
 
       {loading ? (
-        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดตารางนัดหมาย...</p><Progress /></div>
+        <div className="max-w-sm space-y-2 pt-3">
+          <p className="text-muted text-sm">Loading schedule...</p>
+          <Progress />
+        </div>
       ) : error ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-red-400">
           {error}
           <p className="text-muted mt-2 text-xs">
-            ลองออกจากระบบแล้วล็อกอินใหม่ เพื่อขอสิทธิ์ Calendar อีกครั้ง
+            Try signing out and back in to request Calendar permissions again
           </p>
         </div>
       ) : events.length === 0 ? (
         <div className="bg-panel border border-border rounded-xl2 p-6 text-sm text-muted flex items-center gap-2">
           <CalendarDays size={16} />
-          ไม่มีนัดหมายในอีก {days} วัน
+          No events in the next {days} days
         </div>
       ) : (
         <div className="space-y-6">

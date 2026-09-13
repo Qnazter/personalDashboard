@@ -13,10 +13,10 @@ import type { Project, ProjectStatus } from "@/types";
 import { Progress } from "@/components/ui/progress";
 
 const STATUS_LABEL: Record<ProjectStatus, string> = {
-  planning: "วางแผน",
-  "in-progress": "กำลังทำ",
-  blocked: "ติดปัญหา",
-  done: "เสร็จแล้ว",
+  planning: "planning",
+  "in-progress": "in progress",
+  blocked: "issues",
+  done: "done",
 };
 const STATUS_COLOR: Record<ProjectStatus, string> = {
   planning: "bg-slate-400/15 text-slate-300",
@@ -113,7 +113,7 @@ export default function ProjectsPage() {
           </p>
           <h1 className="text-2xl font-semibold">Project Hub</h1>
           <p className="text-muted text-sm mt-1">
-            เก็บบริบท กำหนดช่วงเวลา และเห็นงานที่ต้องให้ความสนใจ
+            You can create, edit, and manage your projects here.
           </p>
         </div>
         <button
@@ -123,7 +123,7 @@ export default function ProjectsPage() {
           }}
           className="bg-accent2 text-slate-950 rounded-xl px-4 py-2.5 flex items-center justify-center gap-2 font-semibold"
         >
-          <Plus size={17} /> เพิ่มโปรเจกต์
+          <Plus size={17} /> Add Project
         </button>
       </div>
       <form
@@ -132,7 +132,7 @@ export default function ProjectsPage() {
       >
         <div className="flex justify-between items-center mb-4">
           <p className="font-medium">
-            {editing ? "แก้ไขรายละเอียดโปรเจกต์" : "โปรเจกต์ใหม่"}
+            {editing ? "Edit Project Details" : "New Project"}
           </p>
           {editing && (
             <button
@@ -151,24 +151,24 @@ export default function ProjectsPage() {
           <input
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
-            placeholder="ชื่อโปรเจกต์ *"
+            placeholder="Project Name *"
             className="input"
           />
           <input
             value={form.url}
             onChange={(e) => set("url", e.target.value)}
-            placeholder="ลิงก์ที่เกี่ยวข้อง (ถ้ามี)"
+            placeholder="Related Link (if any)"
             className="input"
           />
           <textarea
             value={form.notes}
             onChange={(e) => set("notes", e.target.value)}
-            placeholder="รายละเอียด / สิ่งที่ต้องทำต่อ"
+            placeholder="Details / Next Steps"
             rows={3}
             className="input md:col-span-2 resize-y"
           />
           <label className="text-xs text-muted">
-            เริ่มโดยประมาณ
+            Start Date
             <input
               type="date"
               value={form.startDate}
@@ -177,7 +177,7 @@ export default function ProjectsPage() {
             />
           </label>
           <label className="text-xs text-muted">
-            เป้าหมายเสร็จ
+            Target Completion Date
             <input
               type="date"
               value={form.targetDate}
@@ -199,7 +199,7 @@ export default function ProjectsPage() {
             ))}
           </select>
           <button className="bg-accent2 text-slate-950 rounded-lg px-4 py-2 font-semibold text-sm">
-            {editing ? "บันทึกการแก้ไข" : "สร้างโปรเจกต์"}
+            {editing ? "Save Changes" : "Create Project"}
           </button>
         </div>
       </form>
@@ -212,17 +212,20 @@ export default function ProjectsPage() {
               className={`rounded-full px-3 py-1.5 text-xs border transition ${filter === status ? "border-accent2 bg-accent2/10 text-accent2" : "border-border text-muted hover:text-text"}`}
             >
               {status === "all"
-                ? `ทั้งหมด (${projects.length})`
+                ? `All Projects (${projects.length})`
                 : `${STATUS_LABEL[status]} (${projects.filter((p) => p.status === status).length})`}
             </button>
           ),
         )}
       </div>
       {loading ? (
-        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดโปรเจกต์...</p><Progress /></div>
+        <div className="max-w-sm space-y-2 pt-3">
+          <p className="text-muted text-sm">Loading projects...</p>
+          <Progress />
+        </div>
       ) : visible.length === 0 ? (
         <div className="bg-panel border border-dashed border-border rounded-xl2 p-8 text-center text-muted text-sm">
-          ไม่มีโปรเจกต์ในหมวดนี้
+          No projects now
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -247,12 +250,12 @@ export default function ProjectsPage() {
                     )}
                   </div>
                   <p className="text-sm text-muted mt-2 min-h-[2.5rem]">
-                    {project.notes || "ยังไม่มีรายละเอียด"}
+                    {project.notes || "No details available"}
                   </p>
                 </div>
                 <button
                   onClick={() => edit(project)}
-                  title="แก้ไข"
+                  title="Edit"
                   className="text-muted hover:text-accent2 shrink-0"
                 >
                   <Pencil size={16} />
@@ -267,7 +270,7 @@ export default function ProjectsPage() {
                     {project.targetDate || "ไม่ระบุ"}
                   </span>
                 ) : (
-                  <span>ยังไม่กำหนดช่วงเวลา</span>
+                  <span>Time range not specified</span>
                 )}
               </div>
               <div className="border-t border-border mt-3 pt-3 flex justify-between items-center">

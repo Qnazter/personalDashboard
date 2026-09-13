@@ -57,14 +57,15 @@ export default function TodoPage() {
     <div className="max-w-2xl">
       <h1 className="text-xl font-semibold mb-1">To-Do List</h1>
       <p className="text-muted text-sm mb-6">
-        เก็บลง Firestore แบบเรียลไทม์ผ่าน API Route
+        collected in Firebase Firestore, real-time sync, and serverless API
+        routes
       </p>
 
       <form onSubmit={addTodo} className="flex gap-2 mb-6">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="เพิ่มสิ่งที่ต้องทำ..."
+          placeholder="Add a new item..."
           className="flex-1 bg-panel border border-border rounded-lg px-4 py-2.5 outline-none focus:border-accent2"
         />
         <button
@@ -72,14 +73,17 @@ export default function TodoPage() {
           className="bg-accent2 text-black rounded-lg px-4 py-2.5 flex items-center gap-1 font-medium"
         >
           <Plus size={16} />
-          เพิ่ม
+          Add
         </button>
       </form>
 
       {loading ? (
-        <div className="max-w-sm space-y-2 pt-3"><p className="text-muted text-sm">กำลังโหลดรายการ...</p><Progress /></div>
+        <div className="max-w-sm space-y-2 pt-3">
+          <p className="text-muted text-sm">Loading items...</p>
+          <Progress />
+        </div>
       ) : todos.length === 0 ? (
-        <p className="text-muted text-sm">ยังไม่มีรายการ — เพิ่มอันแรกเลย!</p>
+        <p className="text-muted text-sm">No items — Add the first one!</p>
       ) : (
         <ul className="space-y-2">
           {todos.map((todo) => (
